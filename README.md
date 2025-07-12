@@ -1,69 +1,92 @@
-# React + TypeScript + Vite
+# 🌐 Backlink Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-featured Backlink Marketplace web application built with React and TypeScript. The application allows users to list their websites and define the backlink-related services they offer, including:
 
-Currently, two official plugins are available:
+- Guest Posts  
+- Link Insertions  
+- Homepage Placements  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project emphasizes pixel-perfect design, scalable state architecture, modular component structure, and a seamless user experience.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Features
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🔹 Website List Page
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- Paginated table view for all websites
+- Columns include:
+  - Website URL  
+  - Primary Language  
+  - Country  
+  - Offers Summary  
+  - Actions (e.g., Edit)
+- “Add Website” button to create a new listing
+- Row click navigates to edit mode with pre-filled form data
+- Real-time sync of newly added or edited websites using global state
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 🔹 Website Details Page
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+A multi-section form to add/edit website information and offers.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+#### A. Website Details
+
+| Field            | Type                  | Validation             |
+|------------------|-----------------------|-------------------------|
+| Website          | URL Input             | Required, valid URL     |
+| Primary Language | Searchable Dropdown   | Required                |
+| Country          | Searchable Dropdown   | Required                |
+| Categories       | Multi-select Tags     | Optional                |
+| Description      | Textarea              | Required                |
+
+#### B. Offers
+
+##### i. Normal Offers
+
+| Field               | Type         | Validation       |
+|---------------------|--------------|------------------|
+| Guest Post Price     | Number Input | Non-negative     |
+| Link Insertion Price | Number Input | Non-negative     |
+
+##### ii. Grey Niche Offers
+
+Includes 6 predefined niches with the same offer fields.
+
+##### iii. Home Page Offer
+
+| Field       | Type       | Validation       |
+|-------------|------------|------------------|
+| Price       | Number     | Non-negative     |
+| Description | Textarea   | Required         |
+
+#### C. Article Specifications
+
+Includes custom editorial and content-related fields as defined in the design.
+
+---
+
+## 🎨 UI/UX
+
+- Pixel-perfect implementation based on Figma design
+- Responsive layout and component styling with Tailwind CSS
+- UI components built using [shadcn/ui](https://ui.shadcn.com)
+- Smooth form experience with validation and dynamic controls
+
+---
+
+## 🧰 Tech Stack
+
+| Area             | Technology                    |
+|------------------|-------------------------------|
+| Framework        | React.js                      |
+| Language         | TypeScript                    |
+| Styling          | Tailwind CSS                  |
+| UI Components    | shadcn/ui                     |
+| State Management | Zustand                       |
+| Form Handling    | React Hook Form               |
+| Validation       | Yup                           |
+| Routing          | React Router                  |
+
+---
