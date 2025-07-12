@@ -1,0 +1,75 @@
+.image-table-container {
+  width: 100%;
+  font-family: "Inter", sans-serif;
+  border-radius: 8px;
+  background-color: #fdfcff;
+  overflow-x: auto;
+}
+
+.image-table-head {
+  background-color: #613fdd05 !important;
+  font-weight: 600;
+}
+
+.image-table-row {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.image-table-th,
+.image-table-td {
+  flex: 1;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+}
+
+.image-table-th {
+  font-family: "DM Sans";
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  color: #0f0c1b99;
+  border: none !important;
+}
+
+.image-table-td {
+  font-family: "Inter";
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0.25px;
+  color: #0f0c1b;
+  border: none !important;
+}
+
+.image-table-body .image-table-row:nth-of-type(even) {
+  background: rgba(97, 63, 221, 0.02);
+}
+.image-table-body .image-table-row:nth-of-type(odd) {
+  background-color: #fefeff;
+}
+
+.icons-cell .icon {
+  margin-right: 8px;
+  font-size: 16px;
+  color: #6a1b9a;
+}
+
+.country-cell .MuiAvatar-root {
+  margin-right: 8px;
+}
+
+.image-table-loader {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.image-table-pagination {
+  display: flex;
+  justify-content: center;
+  box-shadow: 0px 1px 2px 0px #1018280d !important;
+}
