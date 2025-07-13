@@ -30,7 +30,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ getColumns, getRows }) => {
     <div className="image-table-container">
       <Table>
         <TableHeader className="image-table-head">
-          <TableRow className="image-table-row" style={{ border: "none" }}>
+          <TableRow className="image-table-row">
             {columns.map((col, index) => (
               <TableHead key={index} className="image-table-th">
                 {col.header}
@@ -43,7 +43,6 @@ const CustomTable: React.FC<CustomTableProps> = ({ getColumns, getRows }) => {
             <TableRow
               key={rowIndex}
               className="image-table-row"
-              style={{ border: "none" }}
             >
               {columns.map((col, colIndex) => (
                 <TableCell key={colIndex} className="image-table-td">

@@ -81,7 +81,7 @@ const getRows = (
     category: item.category,
     otherCategories: item.otherCategories,
     greyNiches: (
-      <div className="flex" style={{ color: "#613FDD", gap: "8px" }}>
+      <div className="flex gap-[6px] text-[#613FDD]">
         {item.greyNiches.map((Icon, idx) => (
           <Icon key={idx} />
         ))}
@@ -102,26 +102,15 @@ const MyWebsites = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container" style={{ padding: "12px 24px" }}>
-      <div
-        style={{
-          marginBottom: "46px"
-        }}
-      >
-        <span className="font-[600] text-[24px] leading-[40px] mb-20px">
+    <div className="container px-[24px] py-[12px]">
+      <div className="mb-[46px]">
+        <span className="font-[600] text-[24px] leading-[40px] ">
           {"All websites"}
         </span>
       </div>
-      <div
-        className="flex flex-wrap items-center gap-2 md:flex-row"
-        style={{
-          marginBottom: "40px"
-        }}
-      >
+      <div className="flex flex-wrap items-center gap-2 md:flex-row mb-[40px]">
         <Button
-          variant="secondary"
-          className="bg-[#613FDD] text-[#FEFEFF] rounded-[8px] cursor-pointer"
-          style={{ height: "36px", width: "228px" }}
+          className="h-[36px] w-[228px]"
           onClick={() =>
             navigate(
               appRoutes.myWebsites.main + appRoutes.myWebsites.addWebsite

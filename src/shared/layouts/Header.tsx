@@ -16,10 +16,10 @@ const Header = () => {
   const isInLocation = location.pathname;
 
   return (
-    <header className="w-full bg-[#FEFEFF] shadow-none border-b border-[#EAEAEA] min-h-[58px] px-[24px]">
+    <header className="fixed w-full bg-[#FEFEFF] shadow-none border-b border-[#EAEAEA] min-h-[58px] px-[24px]">
       <nav className="container flex h-[58px] items-center justify-between ">
         {/* Left Logo */}
-        <div className="flex items-center " style={{ gap: "8px" }}>
+        <div className="flex items-center gap-[8px]">
           <img src={AppLogo} alt="Kraken" className="h-9 w-7" />
           <span className="text-[22px] font-[600] leading-[24.29px] text-[#0F0C1B]">
             Kraken
@@ -27,7 +27,7 @@ const Header = () => {
         </div>
 
         {/* Nav Items */}
-        <div className="flex " style={{ gap: "8px" }}>
+        <div className="flex gap-[8px]">
           {navItems.map((item) => {
             const active = isInLocation.includes(item.to);
             return (
@@ -49,10 +49,10 @@ const Header = () => {
 
         {/* Right Icons */}
         <div className="flex items-center gap-6">
-          <Wallet color="#B3B3B3"/>
-          <ShoppingBag color="#B3B3B3"/>
-          <User color="#B3B3B3"/>
-          <Settings color="#B3B3B3"/>
+          <Wallet color="#B3B3B3" />
+          <ShoppingBag color="#B3B3B3" />
+          <User color="#B3B3B3" />
+          <Settings color="#B3B3B3" />
         </div>
       </nav>
     </header>
