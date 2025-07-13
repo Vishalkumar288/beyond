@@ -1,7 +1,6 @@
 .image-table-container {
   width: 100%;
   font-family: "Inter", sans-serif;
-  border-radius: 8px;
   background-color: #fdfcff;
   overflow-x: auto;
 }
@@ -9,6 +8,7 @@
 .image-table-head {
   background-color: #613fdd05 !important;
   font-weight: 600;
+  max-height: 44px !important;
 }
 
 .image-table-row {
@@ -16,14 +16,19 @@
   align-items: center;
   padding: 8px;
   border: none;
+  max-height: 44px !important;
 }
 
 .image-table-th,
 .image-table-td {
-  flex: 1;
   padding: 8px 12px;
   display: flex;
   align-items: center;
+  justify-content: flex-start; 
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-height: 44px !important;
 }
 
 .image-table-th {

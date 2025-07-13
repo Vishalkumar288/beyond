@@ -1,12 +1,20 @@
 import CustomTabs from "@/shared/customTabs/CustomTabs";
 import NormalOffer from "./NormalOffer";
 import type { WebsiteDetailProps } from "./WebsiteDetail";
+import GreyNicheOffer from "./GreyNicheOffer";
+import HomePageLink from "./HomePageLink";
 
-const CreateOffer = ({ control }: WebsiteDetailProps) => {
+const CreateOffer = ({ control, watch }: WebsiteDetailProps) => {
   const tabs = [
-    { label: "Normal offer", element: <NormalOffer control={control} /> },
-    { label: "Grey Niche offer", element: <></> },
-    { label: "Homepage link", element: <></> }
+    {
+      label: "Normal offer",
+      element: <NormalOffer control={control} />
+    },
+    {
+      label: "Grey Niche offer",
+      element: <GreyNicheOffer control={control} watch={watch} />
+    },
+    { label: "Homepage link", element: <HomePageLink control={control} /> }
   ];
 
   return (

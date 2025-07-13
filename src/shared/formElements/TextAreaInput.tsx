@@ -1,5 +1,6 @@
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
 type TextAreaInputProps = {
@@ -7,6 +8,7 @@ type TextAreaInputProps = {
   control: any;
   label?: string;
   placeholder?: string;
+  labelSx?: string;
   disabled?: boolean;
   startIcon?: ReactNode;
 };
@@ -16,6 +18,7 @@ const TextAreaInput = ({
   control,
   label,
   placeholder = "",
+  labelSx = "",
   disabled = false,
   startIcon
 }: TextAreaInputProps) => {
@@ -26,7 +29,9 @@ const TextAreaInput = ({
       render={({ field, fieldState }) => (
         <FormItem>
           {label && (
-            <label className="text-[14px] font-medium text-foreground">
+            <label
+              className={cn(`text-[14px] font-medium text-foreground`, labelSx)}
+            >
               {label}
             </label>
           )}
@@ -39,7 +44,7 @@ const TextAreaInput = ({
               disabled={disabled}
               placeholder={placeholder}
               className={`${startIcon ? "pl-9" : ""} ${
-                fieldState.error ? "border-red-500" : ""
+                fieldState.error ? "border border-[#EF4444]" : ""
               } resize rounded-md min-h-[100px]`}
             />
           </div>

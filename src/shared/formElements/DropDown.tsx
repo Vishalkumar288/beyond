@@ -43,13 +43,13 @@ const DropDown = ({
             </label>
           )}
           <Select
+            value={field.value}
             onValueChange={field.onChange}
-            defaultValue={field.value}
             disabled={disabled}
           >
             <SelectTrigger
               className={`w-full h-[40px] border border-[#EAEAEA] shadow-[0px_1px_2px_0px_#0000000D] px-3 text-left ${
-                fieldState.error ? "border-red-500" : ""
+                fieldState.error ? "border border-[#EF4444]" : ""
               }`}
             >
               <SelectValue placeholder={placeholder} />

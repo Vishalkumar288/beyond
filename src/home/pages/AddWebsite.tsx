@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
@@ -12,46 +12,323 @@ import {
   AccordionTrigger
 } from "@/components/ui/accordion";
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import WebsiteDetail from "../components/WebsiteDetail";
 import CreateOffer from "../components/CreateOffer";
-
+import { formKeys } from "@/constants/formKeys";
+import ArticleSpecification from "../components/ArticleSpecification";
+import { storageKeys } from "@/constants/storageKeys";
+import { useWebsiteFormStore } from "@/store/useWebsiteFormStore";
+import { useNavigate } from "react-router-dom";
+import { CheckCircle2 } from "lucide-react";
+import { appRoutes } from "@/constants/appRoutes";
+import AlertDialogCustom from "@/shared/UiElements/AlertDialogCustom";
 export type FormValues = {
-  username: string;
-  email: string;
+  id?: string;
+  hasConsented?: boolean;
+  [formKeys.website]: string;
+  [formKeys.primaryLang]: string;
+  [formKeys.majorTraffic]: string;
+  [formKeys.mainCategory]: string[];
+  [formKeys.description]: string;
+  [formKeys.owner]: string;
+  [formKeys.guestPosting]: number;
+  [formKeys.linkInsertion]: number;
+  [formKeys.isSamePrice]: string;
+  [formKeys.enterSamePrice]: string;
+  [formKeys.gamblingGuestPost]: number;
+  [formKeys.gamblingLinkInsert]: number;
+  [formKeys.crptoGuestPost]: number;
+  [formKeys.crptoLinkInsert]: number;
+  [formKeys.adultGuestPost]: number;
+  [formKeys.adultLinkInsert]: number;
+  [formKeys.homePageLinkPrice]: number;
+  [formKeys.offerGuidelines]: string;
+  [formKeys.writingArticleIncluded]: string;
+  [formKeys.noOfWords]: string;
+  [formKeys.allowDoFollow]: string;
+  [formKeys.typesOfLink]: string;
+  [formKeys.taggingArticle]: string;
+  [formKeys.noOfLinksAdvertise]: string;
+  [formKeys.otherLinks]: string;
+  [formKeys.otherContent]: string;
+  [formKeys.wordMin]: string;
+  [formKeys.wordMax]: string;
+  [formKeys.linksMin]: number;
+  [formKeys.linksMax]: number;
 };
 
-const schema = yup.object({
-  username: yup
+export const schema = yup.object({
+  [formKeys.website]: yup
     .string()
-    .required("Username is required")
-    .min(3, "Username must be at least 3 characters"),
-  email: yup.string().required("Email is required").email("Enter a valid email")
+    .required("Website is required")
+    .url("Enter a valid URL"),
+
+  [formKeys.primaryLang]: yup.string().required("Primary Language is required"),
+  [formKeys.majorTraffic]: yup.string().required("Country is required"),
+  [formKeys.mainCategory]: yup.array().of(yup.string()).optional(),
+
+  [formKeys.description]: yup.string().required("Description is required"),
+  [formKeys.offerGuidelines]: yup.string().required("Description is required"),
+
+  [formKeys.guestPosting]: yup
+    .number()
+    .typeError("Guest Post Price must be a number")
+    .min(0, "Price cannot be negative")
+    .required("Guest Post Price is required"),
+
+  [formKeys.linkInsertion]: yup
+    .number()
+    .typeError("Link Insertion Price must be a number")
+    .min(0, "Price cannot be negative")
+    .required("Link Insertion Price is required"),
+
+  [formKeys.homePageLinkPrice]: yup
+    .number()
+    .typeError("Price must be a number")
+    .min(0, "Price cannot be negative")
+    .required("Price is required"),
+
+  [formKeys.isSamePrice]: yup.string().optional(),
+
+  [formKeys.enterSamePrice]: yup.string().when(formKeys.isSamePrice, {
+    is: (val: string) => !!val,
+    then: (schema) => schema.required("Enter same price is required"),
+    otherwise: (schema) => schema.optional()
+  }),
+
+  [formKeys.gamblingGuestPost]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.isSamePrice, {
+      is: (val: string) => !val,
+      then: (schema) =>
+        schema
+          .typeError("Price must be a number")
+          .min(0, "Price cannot be negative")
+          .required("Required"),
+      otherwise: (schema) => schema.optional()
+    }),
+
+  [formKeys.gamblingLinkInsert]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.isSamePrice, {
+      is: (val: string) => !val,
+      then: (schema) =>
+        schema
+          .typeError("Price must be a number")
+          .min(0, "Price cannot be negative")
+          .required("Required"),
+      otherwise: (schema) => schema.optional()
+    }),
+
+  [formKeys.crptoGuestPost]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.isSamePrice, {
+      is: (val: string) => !val,
+      then: (schema) =>
+        schema
+          .typeError("Price must be a number")
+          .min(0, "Price cannot be negative")
+          .required("Required"),
+      otherwise: (schema) => schema.optional()
+    }),
+
+  [formKeys.crptoLinkInsert]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.isSamePrice, {
+      is: (val: string) => !val,
+      then: (schema) =>
+        schema
+          .typeError("Price must be a number")
+          .min(0, "Price cannot be negative")
+          .required("Required"),
+      otherwise: (schema) => schema.optional()
+    }),
+
+  [formKeys.adultGuestPost]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.isSamePrice, {
+      is: (val: string) => !val,
+      then: (schema) =>
+        schema
+          .typeError("Price must be a number")
+          .min(0, "Price cannot be negative")
+          .required("Required"),
+      otherwise: (schema) => schema.optional()
+    }),
+
+  [formKeys.adultLinkInsert]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.isSamePrice, {
+      is: (val: string) => !val,
+      then: (schema) =>
+        schema
+          .typeError("Price must be a number")
+          .min(0, "Price cannot be negative")
+          .required("Required"),
+      otherwise: (schema) => schema.optional()
+    }),
+  [formKeys.wordMin]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.noOfWords, {
+      is: "2",
+      then: (schema) => schema.required("Min Words required").min(0),
+      otherwise: (schema) => schema.optional()
+    }),
+  [formKeys.wordMax]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.noOfWords, {
+      is: "2",
+      then: (schema) => schema.required("Max words required").min(0),
+      otherwise: (schema) => schema.optional()
+    }),
+  [formKeys.linksMin]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.noOfLinksAdvertise, {
+      is: "2",
+      then: (schema) => schema.required("Min links required").min(0),
+      otherwise: (schema) => schema.optional()
+    }),
+
+  [formKeys.linksMax]: yup
+    .number()
+    .transform((_, val) => (val === "" ? undefined : Number(val)))
+    .when(formKeys.noOfLinksAdvertise, {
+      is: "2",
+      then: (schema) => schema.required("Max links required").min(0),
+      otherwise: (schema) => schema.optional()
+    })
 });
 
-const AddWebsite = () => {
+type AddWebsiteProps = {
+  initialValues?: FormValues;
+};
+
+const AddWebsite = ({ initialValues }: AddWebsiteProps) => {
   const [hasConsented, setHasConsented] = useState<Boolean>(false);
+  const [hasConsentError, setHasConsentError] = useState<boolean>(false);
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
     undefined
   );
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const navigate = useNavigate();
+
+  const getStoredValues = (): Partial<FormValues> & {
+    hasConsented?: boolean;
+  } => {
+    try {
+      const stored = localStorage.getItem(storageKeys.LOCAL_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : {};
+    } catch (err) {
+      console.error("Error parsing localStorage:", err);
+      return {};
+    }
+  };
+
   const form = useForm<FormValues>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema) as Resolver<FormValues>,
     defaultValues: {
-      username: "",
-      email: ""
+      ...initialValues,
+      ...getStoredValues(),
+      [formKeys.website]: "",
+      [formKeys.primaryLang]: "",
+      [formKeys.majorTraffic]: "",
+      [formKeys.mainCategory]: [],
+      [formKeys.description]: "",
+      [formKeys.owner]: "",
+      [formKeys.guestPosting]: "",
+      [formKeys.linkInsertion]: "",
+      [formKeys.isSamePrice]: "",
+      [formKeys.enterSamePrice]: "",
+      [formKeys.gamblingGuestPost]: "",
+      [formKeys.gamblingLinkInsert]: "",
+      [formKeys.crptoGuestPost]: "",
+      [formKeys.crptoLinkInsert]: "",
+      [formKeys.adultGuestPost]: "",
+      [formKeys.adultLinkInsert]: "",
+      [formKeys.homePageLinkPrice]: "",
+      [formKeys.offerGuidelines]: "",
+      [formKeys.writingArticleIncluded]: "",
+      [formKeys.noOfWords]: "",
+      [formKeys.allowDoFollow]: "",
+      [formKeys.typesOfLink]: "",
+      [formKeys.taggingArticle]: "",
+      [formKeys.noOfLinksAdvertise]: "",
+      [formKeys.otherLinks]: "",
+      [formKeys.otherContent]: "",
+      [formKeys.wordMin]: "",
+      [formKeys.wordMax]: "",
+      [formKeys.linksMin]: "",
+      [formKeys.linksMax]: ""
     },
     shouldFocusError: false
   });
 
-  const { control } = form;
+  const { control, handleSubmit, watch, reset } = form;
 
-  // const onSubmit = (data: FormValues) => {
-  //   console.log("Form submitted:", data);
-  // };
+  useEffect(() => {
+    const stored = getStoredValues();
+    if (Object.keys(stored).length > 0) {
+      reset(stored); // for form values
+      if (stored.hasConsented) {
+        setHasConsented(true);
+      }
+    }
+  }, [reset]);
 
-  // const onError = (errors: any) => {
-  //   console.log("Validation errors:", errors);
-  // };
+  const watchedValues = watch();
+
+  useEffect(() => {
+    const valuesToStore = {
+      ...watchedValues,
+      hasConsented
+    };
+    localStorage.setItem(
+      storageKeys.LOCAL_STORAGE_KEY,
+      JSON.stringify(valuesToStore)
+    );
+  }, [watchedValues, hasConsented]);
+
+  const addFormEntry = useWebsiteFormStore((state) => state.addFormEntry);
+
+  const onSubmit = (data: FormValues) => {
+    if (!hasConsented) {
+      setHasConsentError(true);
+      setAccordionValue("item-1");
+      return;
+    }
+    const finalData = {
+      ...data,
+      hasConsented: true // Explicitly include this in submission
+    };
+    setHasConsentError(false);
+    addFormEntry(finalData);
+    localStorage.removeItem(storageKeys.LOCAL_STORAGE_KEY);
+    console.log("Form submitted:", data);
+    setShowSuccessDialog(true);
+  };
+
+  const onError = () => {
+    if (!hasConsented) {
+      setHasConsentError(true);
+      setAccordionValue("item-1");
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem(storageKeys.LOCAL_STORAGE_KEY);
+    };
+  }, []);
 
   return (
     <Form {...form}>
@@ -81,73 +358,100 @@ const AddWebsite = () => {
             className="h-[321px] w-[628px]"
           />
         </div>
-        <Accordion
-          type="single"
-          collapsible
-          value={accordionValue}
-          onValueChange={setAccordionValue}
-          className="border border-[#EAEAEA] rounded-md px-[24px] py-[12px]"
-        >
-          <AccordionItem value="item-1">
-            <AccordionTrigger className="flex items-center w-full ">
-              <div className="flex items-center justify-between gap-4 flex-1">
-                <p className="font-[400] font-[inter] text-[14px]">
-                  Hey, Accept Preconditions before you start the listing!
-                </p>
-                {accordionValue !== "item-1" &&
-                  (hasConsented ? (
-                    <Button
-                      variant={"secondary"}
-                      className="bg-accepted-primary text-accepted-foreground shadow-xs rounded-[24px] h-[30px]"
-                    >
-                      <Check color="#34C759" />
-                      Accepted
-                    </Button>
-                  ) : (
-                    <Button
-                      variant={"secondary"}
-                      className="bg-pending-primary text-pending-foreground shadow-xs rounded-[24px] h-[30px]"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-[#FF9500]" />
-                        Pending
+        <div className="flex flex-col gap-5">
+          <Accordion
+            type="single"
+            collapsible
+            value={accordionValue}
+            onValueChange={setAccordionValue}
+            className={`rounded-md px-[24px] py-[12px] ${
+              hasConsentError
+                ? "border border-[#EF4444]"
+                : "border border-[#EAEAEA]"
+            }`}
+          >
+            <AccordionItem value="item-1">
+              <AccordionTrigger className="flex items-center w-full ">
+                <div className="flex items-center justify-between gap-4 flex-1">
+                  <p className="font-[400] font-[inter] text-[14px]">
+                    Hey, Accept Preconditions before you start the listing!
+                  </p>
+                  {accordionValue !== "item-1" &&
+                    (hasConsented ? (
+                      <div className="flex items-center gap-2 p-3 bg-accepted-primary text-accepted-foreground shadow-xs rounded-[24px] h-[30px]">
+                        <Check color="#34C759" size={"16px"} />
+                        Accepted
                       </div>
-                    </Button>
-                  ))}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="flex flex-col gap-4">
-              <p className="font-[400] font-[inter] text-[14px] text-[#0F0C1B99]">
-                Before you can proceed with your listing, please make sure to
-                review all required preconditions. Accepting these is mandatory
-                to continue. It ensures your submission meets our
-                platformstandards and avoids delays. Listings that don't meet
-                these terms may be rejected. Take a moment to go through them
-                carefully before moving ahead. Once accepted, you'll be able to
-                start listing right away.
-              </p>
-              {hasConsented ? (
-                <Button
-                  variant={"secondary"}
-                  className="bg-accepted-primary text-accepted-foreground shadow-xs rounded-[24px] h-[30px] w-[107px]"
-                >
-                  <Check color="#34C759" />
-                  {"Accepted"}
-                </Button>
-              ) : (
-                <Button
-                  className="h-[36px] w-[136px]"
-                  onClick={() => setHasConsented(true)}
-                >
-                  {"Accept"}
-                </Button>
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+                    ) : (
+                      <div className="flex items-center p-3 bg-pending-primary text-pending-foreground shadow-xs rounded-[24px] h-[30px]">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-[#FF9500]" />
+                          Pending
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-4 mt-3">
+                <p className="font-[400] font-[inter] text-[14px] text-[#0F0C1B99]">
+                  Before you can proceed with your listing, please make sure to
+                  review all required preconditions. Accepting these is
+                  mandatory to continue. It ensures your submission meets our
+                  platformstandards and avoids delays. Listings that don't meet
+                  these terms may be rejected. Take a moment to go through them
+                  carefully before moving ahead. Once accepted, you'll be able
+                  to start listing right away.
+                </p>
+                {hasConsented ? (
+                  <Button
+                    variant={"secondary"}
+                    className="bg-accepted-primary text-accepted-foreground shadow-xs rounded-[24px] h-[30px] w-[107px]"
+                  >
+                    <Check color="#34C759" />
+                    {"Accepted"}
+                  </Button>
+                ) : (
+                  <Button
+                    className="h-[36px] w-[136px]"
+                    onClick={() => {
+                      setHasConsented(true);
+                      setHasConsentError(false);
+                    }}
+                  >
+                    {"Accept"}
+                  </Button>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+          {hasConsentError && (
+            <p className="text-sm text-[#EF4444] ml-auto mr-4 -mt-4">
+              Please accept pre-conditions to continue.
+            </p>
+          )}
+        </div>
         <WebsiteDetail control={control} />
-        <CreateOffer control={control} />
+        <CreateOffer control={control} watch={watch} />
+        <ArticleSpecification control={control} watch={watch} />
+        <div>
+          <Button
+            onClick={handleSubmit(onSubmit, onError)}
+            className="w-[200px]"
+          >
+            {"Add Website"}
+          </Button>
+        </div>
       </div>
+      <AlertDialogCustom
+        open={showSuccessDialog}
+        onOpenChange={setShowSuccessDialog}
+        icon={<CheckCircle2 size={60} className="text-green-500" />}
+        title="Website is successfully added"
+        subtext=""
+        buttonText="Go to Dashboard"
+        buttonVariant="default"
+        onConfirm={() => navigate(appRoutes.myWebsites.main)}
+      />
     </Form>
   );
 };

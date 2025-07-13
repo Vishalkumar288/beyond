@@ -5,5 +5,18 @@ export const label = {
   mainCategory: "Main Category",
   description: "Description of Website",
   guestPosting: "Guest posting",
-  linkInsertion: "Link insertion"
+  linkInsertion: "Link insertion",
+  enterSamePrice: "Enter Price",
+  priceGuestPost: "Price for Guest Posting",
+  priceLinkInsertion: "Price for Link Insertion",
+  homePageLinkPrice: "Price",
+  offerGuidelines: "Offer Guidelines",
+  writingArticleIncluded: "Is writing of an article included in the offer?",
+  noOfWords: "Number of words in the article",
+  allowDoFollow: "I allow DOFOLLOW links in the article",
+  typesOfLink: "Type of links allowed:",
+  taggingArticle: "Tagging articles policy:",
+  noOfLinksAdvertise: "A number of links to the advertiser in the article:",
+  otherLinks: "Other links in the article:",
+  otherContent: "Other content rules/specifications: "
 };
