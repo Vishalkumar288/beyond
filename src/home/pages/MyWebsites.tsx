@@ -13,11 +13,8 @@ import { Button } from "@/components/ui/button";
 import CustomTable from "@/shared/customTable";
 import { appRoutes } from "@/constants/appRoutes";
 import { useWebsiteFormStore } from "@/store/useWebsiteFormStore";
-import {
-  countryOptions,
-  languageOptions,
-  categoryOptions
-} from "@/constants";
+import { countryOptions, languageOptions, categoryOptions } from "@/constants";
+import { usePaginationState } from "@/store/usePaginationState";
 
 const getFlagOption = (options: typeof countryOptions, key: string) =>
   options.find((opt) => opt.name === key);
@@ -45,7 +42,7 @@ const getCategoryLabel = (value: string) => {
 
 const getColumns = () => [
   { header: "Website", accessor: "website", width: "240px" },
-  { header: "Country", accessor: "country", width: "156px"  },
+  { header: "Country", accessor: "country", width: "156px" },
   { header: "Language", accessor: "language", width: "146px" },
   { header: "Category", accessor: "category", width: "146px" },
   { header: "Other Categories", accessor: "otherCategories", width: "300px" },
@@ -64,12 +61,8 @@ const getRows = (
 }[] => {
   return data.map((item: any, idx: number) => ({
     website: item.website,
-    country: (
-      <FlagImgComp name={item.majorTraffic} options={countryOptions} />
-    ),
-    language: (
-      <FlagImgComp name={item.primaryLang} options={languageOptions} />
-    ),
+    country: <FlagImgComp name={item.majorTraffic} options={countryOptions} />,
+    language: <FlagImgComp name={item.primaryLang} options={languageOptions} />,
     category: (
       <div className="truncate max-w-[200px]">
         {getCategoryLabel(item.mainCategory?.[0] || "-")}
@@ -92,9 +85,10 @@ const getRows = (
 
 const MyWebsites = () => {
   const rowsPerPage = 11;
-  const [page, setPage] = useState(1);
-  const entries = useWebsiteFormStore((state) => state.formEntries);console.log(entries)
-  const allData = entries.reverse() || [];
+  const page = usePaginationState((state) => state.currentPage);
+  const setPage = usePaginationState((state) => state.setCurrentPage);
+  const entries = useWebsiteFormStore((state) => state.formEntries);
+  const allData = entries || [];
 
   const paginated = allData.slice((page - 1) * rowsPerPage, page * rowsPerPage);
   const totalPages = Math.ceil(allData.length / rowsPerPage);
@@ -127,6 +121,10 @@ const MyWebsites = () => {
         currentPage={page}
         onPageChange={setPage}
         totalPages={totalPages}
+        onRowClick={(index) => {
+          const entry = paginated[index];
+          navigate(`${appRoutes.myWebsites.main}/manage-website/${entry.id}`);
+        }}
       />
     </div>
   );

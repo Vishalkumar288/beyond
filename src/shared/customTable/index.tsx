@@ -30,6 +30,7 @@ export interface CustomTableProps {
   currentPage?: number;
   onPageChange?: (page: number) => void;
   totalPages: number;
+  onRowClick?: (rowIndex: number) => void;
 }
 
 const CustomTable: React.FC<CustomTableProps> = ({
@@ -37,7 +38,8 @@ const CustomTable: React.FC<CustomTableProps> = ({
   getRows,
   currentPage = 1,
   onPageChange,
-  totalPages
+  totalPages,
+  onRowClick
 }) => {
   const columns = getColumns();
   const rows = getRows();
@@ -114,7 +116,11 @@ const CustomTable: React.FC<CustomTableProps> = ({
         </TableHeader>
         <TableBody className="image-table-body">
           {rows.map((row, rowIndex) => (
-            <TableRow key={rowIndex} className="image-table-row">
+            <TableRow
+              key={rowIndex}
+              className="image-table-row cursor-pointer"
+              onClick={() => onRowClick?.(rowIndex)}
+            >
               {columns.map((col, colIndex) => (
                 <TableCell
                   key={colIndex}

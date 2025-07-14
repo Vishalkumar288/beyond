@@ -7,18 +7,30 @@ import { dummyData } from "@/constants";
 type WebsiteFormStore = {
   formEntries: FormValues[];
   addFormEntry: (entry: FormValues) => void;
+  updateFormEntry: (updatedEntry: FormValues) => void;
   clearFormEntries: () => void;
+  deleteFormEntry: (id: string) => void;
 };
 
 export const useWebsiteFormStore = create<WebsiteFormStore>()(
   persist(
     (set) => ({
-      formEntries: [],
+      formEntries: dummyData,
       addFormEntry: (entry) =>
         set((state) => ({
-          formEntries: [...state.formEntries, { ...entry, id: nanoid() }]
+          formEntries: [{ ...entry, id: nanoid() }, ...state.formEntries]
         })),
-      clearFormEntries: () => set({ formEntries: dummyData })
+      updateFormEntry: (updatedEntry: FormValues) =>
+        set((state) => ({
+          formEntries: state.formEntries.map((entry) =>
+            entry.id === updatedEntry.id ? updatedEntry : entry
+          )
+        })),
+      clearFormEntries: () => set({ formEntries: dummyData }),
+      deleteFormEntry: (id: string) =>
+        set((state) => ({
+          formEntries: state.formEntries.filter((entry) => entry.id !== id)
+        }))
     }),
     {
       name: "website-form-storage"

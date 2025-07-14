@@ -220,6 +220,8 @@ const AddWebsite = ({ initialValues }: AddWebsiteProps) => {
     undefined
   );
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const navigate = useNavigate();
 
   const getStoredValues = (): Partial<FormValues> & {
@@ -238,7 +240,6 @@ const AddWebsite = ({ initialValues }: AddWebsiteProps) => {
     resolver: yupResolver(schema) as Resolver<FormValues>,
     defaultValues: {
       ...initialValues,
-      ...getStoredValues(),
       [formKeys.website]: "",
       [formKeys.primaryLang]: "",
       [formKeys.majorTraffic]: "",
@@ -276,14 +277,21 @@ const AddWebsite = ({ initialValues }: AddWebsiteProps) => {
   const { control, handleSubmit, watch, reset } = form;
 
   useEffect(() => {
-    const stored = getStoredValues();
-    if (Object.keys(stored).length > 0) {
-      reset(stored); // for form values
-      if (stored.hasConsented) {
+    if (initialValues) {
+      reset(initialValues); // ✅ Reset with edit data if available
+      if (initialValues.hasConsented) {
         setHasConsented(true);
       }
+    } else {
+      const stored = getStoredValues();
+      if (Object.keys(stored).length > 0) {
+        reset(stored); // fallback to localStorage if creating new
+        if (stored.hasConsented) {
+          setHasConsented(true);
+        }
+      }
     }
-  }, [reset]);
+  }, [initialValues, reset]);
 
   const watchedValues = watch();
 
@@ -299,6 +307,8 @@ const AddWebsite = ({ initialValues }: AddWebsiteProps) => {
   }, [watchedValues, hasConsented]);
 
   const addFormEntry = useWebsiteFormStore((state) => state.addFormEntry);
+  const deleteFormEntry = useWebsiteFormStore((state) => state.deleteFormEntry);
+  const updateFormEntry = useWebsiteFormStore((state) => state.updateFormEntry);
 
   const onSubmit = (data: FormValues) => {
     if (!hasConsented) {
@@ -306,14 +316,22 @@ const AddWebsite = ({ initialValues }: AddWebsiteProps) => {
       setAccordionValue("item-1");
       return;
     }
+
     const finalData = {
       ...data,
-      hasConsented: true // Explicitly include this in submission
+      hasConsented: true
     };
+
     setHasConsentError(false);
-    addFormEntry(finalData);
+
+    if (initialValues?.id) {
+      updateFormEntry(finalData);
+    } else {
+      addFormEntry(finalData);
+    }
+
     localStorage.removeItem(storageKeys.LOCAL_STORAGE_KEY);
-    console.log("Form submitted:", data);
+    console.log("Form submitted:", finalData);
     setShowSuccessDialog(true);
   };
 
@@ -433,20 +451,48 @@ const AddWebsite = ({ initialValues }: AddWebsiteProps) => {
         <WebsiteDetail control={control} />
         <CreateOffer control={control} watch={watch} />
         <ArticleSpecification control={control} watch={watch} />
-        <div>
+        <div className="flex gap-4 items-center">
           <Button
             onClick={handleSubmit(onSubmit, onError)}
             className="w-[200px]"
           >
-            {"Add Website"}
+            {initialValues ? "Update Website" : "Add Website"}
           </Button>
+          {initialValues && (
+            <>
+              <Button
+                variant="destructive"
+                className="w-[200px]"
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                Delete Website
+              </Button>
+
+              <AlertDialogCustom
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+                icon={<CheckCircle2 size={60} className="text-red-500" />}
+                title="Are you sure you want to delete this website?"
+                subtext="This action cannot be undone."
+                buttonText="Delete"
+                buttonVariant="destructive"
+                onConfirm={() => {
+                  if (initialValues?.id) {
+                    deleteFormEntry(initialValues.id);
+                    localStorage.removeItem(storageKeys.LOCAL_STORAGE_KEY);
+                    navigate(appRoutes.myWebsites.main);
+                  }
+                }}
+              />
+            </>
+          )}
         </div>
       </div>
       <AlertDialogCustom
         open={showSuccessDialog}
         onOpenChange={setShowSuccessDialog}
         icon={<CheckCircle2 size={60} className="text-green-500" />}
-        title="Website is successfully added"
+        title={`Website is successfully ${initialValues ? "Updated" : "Added"}`}
         subtext=""
         buttonText="Go to Dashboard"
         buttonVariant="default"
