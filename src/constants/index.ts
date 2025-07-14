@@ -1,17 +1,6 @@
-type Option = {
-  name: string;
-  displayName: string;
-  flagUrl: string;
-};
+import type { FormValues } from "@/home/pages/AddWebsite";
 
-type categoryOption = {
-  label: string;
-  value: string;
-};
-
-type OptionType = "country" | "language";
-
-export const countryOptions: Option[] = [
+export const countryOptions = [
   {
     name: "gb",
     displayName: "United Kingdom",
@@ -39,7 +28,7 @@ export const countryOptions: Option[] = [
   }
 ];
 
-export const languageOptions: Option[] = [
+export const languageOptions = [
   {
     name: "gb",
     displayName: "English UK",
@@ -67,7 +56,7 @@ export const languageOptions: Option[] = [
   }
 ];
 
-export const categoryOptions: categoryOption[] = [
+export const categoryOptions = [
   { label: "Animals / Pets", value: "animals_pets" },
   { label: "Art", value: "art" },
   { label: "Auto", value: "auto" },
@@ -111,11 +100,7 @@ export const categoryOptions: categoryOption[] = [
   { label: "Shopping", value: "shopping" }
 ];
 
-export const getOptions = (type: OptionType): Option[] => {
-  return type === "country" ? countryOptions : languageOptions;
-};
-
-export const dummyData = [
+export const dummyData: FormValues[] = [
   {
     website: "https://example1.com",
     id: "gAMClFCg-jetrlRYIwJbq",

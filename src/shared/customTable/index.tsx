@@ -45,9 +45,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
   const rows = getRows();
 
   const renderPageLinks = () => {
-    const pageLinks: React.ReactNode[] = [];
-
-    const pageNumbers = [];
+    const pageNumbers: (number | "...")[] = [];
     const maxVisible = 5;
 
     if (totalPages <= maxVisible) {
@@ -56,43 +54,35 @@ const CustomTable: React.FC<CustomTableProps> = ({
       }
     } else {
       if (currentPage <= 3) {
-        pageNumbers.push(...[1, 2, 3, "...", totalPages]);
+        pageNumbers.push(1, 2, 3, "...", totalPages);
       } else if (currentPage >= totalPages - 2) {
-        pageNumbers.push(
-          ...[1, "...", totalPages - 2, totalPages - 1, totalPages]
-        );
+        pageNumbers.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
       } else {
-        pageNumbers.push(...[1, "...", currentPage, "...", totalPages]);
+        pageNumbers.push(1, "...", currentPage, "...", totalPages);
       }
     }
 
-    pageNumbers.forEach((num, index) => {
-      if (num === "...") {
-        pageLinks.push(
-          <PaginationItem key={`ellipsis-${index}`}>
-            <PaginationEllipsis />
-          </PaginationItem>
-        );
-      } else {
-        pageLinks.push(
-          <PaginationItem key={num}>
-            <PaginationLink
-              isActive={num === currentPage}
-              onClick={() => onPageChange?.(Number(num))}
-              className={
-                num === currentPage
-                  ? "rounded-none border border-transparent bg-[#EAEAEA]"
-                  : "rounded-none border-l border-r  border-[#EAEAEA]"
-              }
-            >
-              {num}
-            </PaginationLink>
-          </PaginationItem>
-        );
-      }
-    });
-
-    return pageLinks;
+    return pageNumbers.map((num, index) =>
+      num === "..." ? (
+        <PaginationItem key={`ellipsis-${index}`}>
+          <PaginationEllipsis />
+        </PaginationItem>
+      ) : (
+        <PaginationItem key={num}>
+          <PaginationLink
+            isActive={num === currentPage}
+            onClick={() => onPageChange?.(Number(num))}
+            className={
+              num === currentPage
+                ? "rounded-none border border-transparent bg-[#EAEAEA]"
+                : "rounded-none border-l border-r border-[#EAEAEA]"
+            }
+          >
+            {num}
+          </PaginationLink>
+        </PaginationItem>
+      )
+    );
   };
 
   return (

@@ -16,18 +16,18 @@ import { useWebsiteFormStore } from "@/store/useWebsiteFormStore";
 import { countryOptions, languageOptions, categoryOptions } from "@/constants";
 import { usePaginationState } from "@/store/usePaginationState";
 
-const getFlagOption = (options: typeof countryOptions, key: string) =>
-  options.find((opt) => opt.name === key);
-
 const FlagImgComp = ({
   name,
-  options
+  type
 }: {
   name: string;
-  options: typeof countryOptions;
+  type: "country" | "language";
 }) => {
-  const opt = getFlagOption(options, name);
+  const options = type === "country" ? countryOptions : languageOptions;
+  const opt = options.find((opt) => opt.name === name);
+
   if (!opt) return <span className="text-muted-foreground">-</span>;
+
   return (
     <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap text-ellipsis">
       <img src={opt.flagUrl} alt={opt.displayName} width={20} height={20} />
@@ -61,8 +61,8 @@ const getRows = (
 }[] => {
   return data.map((item: any, idx: number) => ({
     website: item.website,
-    country: <FlagImgComp name={item.majorTraffic} options={countryOptions} />,
-    language: <FlagImgComp name={item.primaryLang} options={languageOptions} />,
+    country: <FlagImgComp name={item.majorTraffic} type="country" />,
+    language: <FlagImgComp name={item.primaryLang} type="language" />,
     category: (
       <div className="truncate max-w-[200px]">
         {getCategoryLabel(item.mainCategory?.[0] || "-")}

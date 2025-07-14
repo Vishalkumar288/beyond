@@ -19,11 +19,9 @@ type CheckboxGroupProps = {
 };
 
 const chunkArray = <T,>(array: T[], chunkSize: number): T[][] => {
-  const result: T[][] = [];
-  for (let i = 0; i < array.length; i += chunkSize) {
-    result.push(array.slice(i, i + chunkSize));
-  }
-  return result;
+  return Array.from({ length: Math.ceil(array.length / chunkSize) }, (_, i) =>
+    array.slice(i * chunkSize, i * chunkSize + chunkSize)
+  );
 };
 
 const CheckboxGroup = ({
@@ -42,7 +40,9 @@ const CheckboxGroup = ({
 
   const handleChange = (checked: boolean, optionValue: string) => {
     if (checked) {
-      onChange([...value, optionValue]);
+      if (!value.includes(optionValue)) {
+        onChange([...value, optionValue]);
+      }
     } else {
       onChange(value.filter((v: string) => v !== optionValue));
     }
@@ -80,7 +80,7 @@ const CheckboxGroup = ({
                 />
                 <Label
                   htmlFor={opt.value}
-                  className={`text-sm text-[#0F0C1B99] cursor-pointer ${optionlabelSx}` }
+                  className={`text-sm text-[#0F0C1B99] cursor-pointer ${optionlabelSx}`}
                 >
                   {opt.label}
                 </Label>

@@ -6,7 +6,7 @@ import type { FormValues } from "../pages/AddWebsite";
 import DropDown from "@/shared/formElements/DropDown";
 import CheckboxGroup from "@/shared/formElements/CheckBoxGroup";
 import TextAreaInput from "@/shared/formElements/TextAreaInput";
-import { categoryOptions, getOptions } from "@/constants";
+import { categoryOptions, countryOptions, languageOptions } from "@/constants";
 
 export type WebsiteDetailProps = {
   control: Control<FormValues>;
@@ -36,7 +36,7 @@ const WebsiteDetail = ({ control }: WebsiteDetailProps) => {
             control={control}
             label={label.primaryLang}
             placeholder="Select a Language"
-            options={getOptions("language")}
+            options={languageOptions}
           />
         </div>
         <div className="col-span-3">
@@ -45,7 +45,7 @@ const WebsiteDetail = ({ control }: WebsiteDetailProps) => {
             control={control}
             label={label.majorTraffic}
             placeholder="Select a Country"
-            options={getOptions("country")}
+            options={countryOptions}
           />
         </div>
         <div className="col-span-12">
