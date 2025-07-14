@@ -4,6 +4,7 @@ import MyWebsites from "@/home/pages/MyWebsites";
 import { appRoutes } from "@/constants/appRoutes";
 import WorkInProgress from "../layouts/WorkInProgress";
 import AddWebsite from "@/home/pages/AddWebsite";
+import EditWebsite from "@/home/pages/EditWebsite";
 
 export const publicRoutes: React.ReactNode = (
   <>
@@ -12,6 +13,10 @@ export const publicRoutes: React.ReactNode = (
     <Route
       path={appRoutes.myWebsites.main + appRoutes.myWebsites.addWebsite}
       element={<AddWebsite />}
+    />
+    <Route
+      path={appRoutes.myWebsites.main + appRoutes.myWebsites.manageWebsite}
+      element={<EditWebsite />}
     />
     <Route
       path={appRoutes.marketplace}

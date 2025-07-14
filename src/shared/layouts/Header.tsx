@@ -16,7 +16,7 @@ const Header = () => {
   const isInLocation = location.pathname;
 
   return (
-    <header className="fixed w-full bg-[#FEFEFF] shadow-none border-b border-[#EAEAEA] min-h-[58px] px-[24px]">
+    <header className="z-[9999] fixed w-full bg-[#FEFEFF] shadow-none border-b border-[#EAEAEA] min-h-[58px] px-[24px]">
       <nav className="container flex h-[58px] items-center justify-between ">
         {/* Left Logo */}
         <div className="flex items-center gap-[8px]">

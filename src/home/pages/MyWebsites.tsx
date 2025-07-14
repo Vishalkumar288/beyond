@@ -1,10 +1,10 @@
 import { useState, type JSX } from "react";
 import {
-  CircleDollarSign,
+  // CircleDollarSign,
   Bitcoin,
   Cannabis,
-  ShieldPlus,
-  Glasses,
+  // ShieldPlus,
+  // Glasses,
   Dice5
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -12,92 +12,86 @@ import { DynamicIcon } from "lucide-react/dynamic";
 import { Button } from "@/components/ui/button";
 import CustomTable from "@/shared/customTable";
 import { appRoutes } from "@/constants/appRoutes";
+import { useWebsiteFormStore } from "@/store/useWebsiteFormStore";
+import { countryOptions, languageOptions, categoryOptions } from "@/constants";
+import { usePaginationState } from "@/store/usePaginationState";
 
-type DummyRow = {
-  website: string;
-  country: string;
-  language: string;
-  category: string;
-  otherCategories: string;
-  greyNiches: React.ComponentType[];
+const getFlagOption = (options: typeof countryOptions, key: string) =>
+  options.find((opt) => opt.name === key);
+
+const FlagImgComp = ({
+  name,
+  options
+}: {
+  name: string;
+  options: typeof countryOptions;
+}) => {
+  const opt = getFlagOption(options, name);
+  if (!opt) return <span className="text-muted-foreground">-</span>;
+  return (
+    <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap text-ellipsis">
+      <img src={opt.flagUrl} alt={opt.displayName} width={20} height={20} />
+      <span className="truncate max-w-[120px]">{opt.displayName}</span>
+    </div>
+  );
 };
 
-const dummyData: DummyRow[] = [
-  {
-    website: "example.com",
-    country: "🇺🇸 United States",
-    language: "English",
-    category: "Computer & Electronics",
-    otherCategories: "Entertainment",
-    greyNiches: [
-      Bitcoin,
-      Dice5,
-      CircleDollarSign,
-      ShieldPlus,
-      Glasses,
-      Cannabis
-    ]
-  },
-  {
-    website: "example.com",
-    country: "🇩🇪 Germany",
-    language: "English",
-    category: "Computer & Electronics",
-    otherCategories: "Entertainment",
-    greyNiches: [
-      Bitcoin,
-      Dice5,
-      CircleDollarSign,
-      ShieldPlus,
-      Glasses,
-      Cannabis
-    ]
-  }
-];
+const getCategoryLabel = (value: string) => {
+  return categoryOptions.find((c) => c.value === value)?.label || value;
+};
 
 const getColumns = () => [
-  { header: "Website", accessor: "website" },
-  { header: "Country", accessor: "country" },
-  { header: "Language", accessor: "language" },
-  { header: "Category", accessor: "category" },
-  { header: "Other Categories", accessor: "otherCategories" },
-  { header: "Grey Niches", accessor: "greyNiches" }
+  { header: "Website", accessor: "website", width: "240px" },
+  { header: "Country", accessor: "country", width: "156px" },
+  { header: "Language", accessor: "language", width: "146px" },
+  { header: "Category", accessor: "category", width: "146px" },
+  { header: "Other Categories", accessor: "otherCategories", width: "300px" },
+  { header: "Grey Niches", accessor: "greyNiches", width: "200px" }
 ];
 
 const getRows = (
-  data: DummyRow[]
+  data: any
 ): {
   website: string;
-  country: string;
-  language: string;
-  category: string;
-  otherCategories: string;
+  country: JSX.Element;
+  language: JSX.Element;
+  category: JSX.Element;
+  otherCategories: JSX.Element;
   greyNiches: JSX.Element;
 }[] => {
-  return data.map((item) => ({
+  return data.map((item: any, idx: number) => ({
     website: item.website,
-    country: item.country,
-    language: item.language,
-    category: item.category,
-    otherCategories: item.otherCategories,
+    country: <FlagImgComp name={item.majorTraffic} options={countryOptions} />,
+    language: <FlagImgComp name={item.primaryLang} options={languageOptions} />,
+    category: (
+      <div className="truncate max-w-[200px]">
+        {getCategoryLabel(item.mainCategory?.[0] || "-")}
+      </div>
+    ),
+    otherCategories: (
+      <div className="truncate max-w-[200px]">
+        {item.mainCategory?.slice(1).map(getCategoryLabel).join(", ") || "-"}
+      </div>
+    ),
     greyNiches: (
       <div className="flex gap-[6px] text-[#613FDD]">
-        {item.greyNiches.map((Icon, idx) => (
-          <Icon key={idx} />
-        ))}
+        {item.gamblingGuestPost ? <Dice5 key={`d-${idx}`} /> : null}
+        {item.crptoGuestPost ? <Bitcoin key={`b-${idx}`} /> : null}
+        {item.adultGuestPost ? <Cannabis key={`a-${idx}`} /> : null}
       </div>
     )
   }));
 };
 
 const MyWebsites = () => {
-  const rowsPerPage = 10;
-  const [page, setPage] = useState(1);
-  const paginated = dummyData.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage
-  );
-  const totalPages = Math.ceil(dummyData.length / rowsPerPage);
+  const rowsPerPage = 11;
+  const page = usePaginationState((state) => state.currentPage);
+  const setPage = usePaginationState((state) => state.setCurrentPage);
+  const entries = useWebsiteFormStore((state) => state.formEntries);
+  const allData = entries || [];
+
+  const paginated = allData.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const totalPages = Math.ceil(allData.length / rowsPerPage);
 
   const navigate = useNavigate();
 
@@ -127,6 +121,10 @@ const MyWebsites = () => {
         currentPage={page}
         onPageChange={setPage}
         totalPages={totalPages}
+        onRowClick={(index) => {
+          const entry = paginated[index];
+          navigate(`${appRoutes.myWebsites.main}/manage-website/${entry.id}`);
+        }}
       />
     </div>
   );
