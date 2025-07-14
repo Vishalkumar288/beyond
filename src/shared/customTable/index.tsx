@@ -55,9 +55,6 @@ const CustomTable: React.FC<CustomTableProps> = ({
         pageNumbers.push(i);
       }
     } else {
-      const startPages = [1, 2];
-      const endPages = [totalPages - 1, totalPages];
-
       if (currentPage <= 3) {
         pageNumbers.push(...[1, 2, 3, "...", totalPages]);
       } else if (currentPage >= totalPages - 2) {
